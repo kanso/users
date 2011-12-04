@@ -130,7 +130,7 @@ var createUser = function(username, password, properties, callback) {
     doc._id = 'org.couchdb.user:' + username;
     doc.name = username;
     doc.type = 'user';
-    
+
     _.extend(doc, properties);
 
     db.newUUID(100, function (err, uuid) {
@@ -173,7 +173,7 @@ var createAdmin = function(username, password, callback) {
 
 
 /**
- * Sanitize the arguments by allowing to omit the properties and 
+ * Sanitize the arguments by allowing to omit the properties and
  * predefining the roles if they're not set.
  *
  * @name sanitizeArguments(username, password, properties, callback, callback2)
@@ -188,13 +188,13 @@ var createAdmin = function(username, password, callback) {
 var sanitizeArguments = function(username, password, properties, callback, callback2) {
     if (!callback) {
         callback = properties;
-        properties = [];
+        properties = {};
     }
-    
+
     if (!properties.roles) {
         properties.roles = [];
     }
-    
+
     callback2(username, password, properties, callback);
 };
 
@@ -306,8 +306,7 @@ exports.list = function(q, callback) {
 
 /**
  * Creates a new user document with given username and password.
- * If first given role in the properties is _admin, 
- * user will be made admin.
+ * If properties.roles contains '_admin', user will be made admin.
  *
  * @name create(username, password, properties, callback)
  * @param {String} username
@@ -318,9 +317,9 @@ exports.list = function(q, callback) {
  */
 
 exports.create = function (username, password, properties, callback) {
-    sanitizeArguments(username, password, properties, callback, 
+    sanitizeArguments(username, password, properties, callback,
         function(username, password, properties, callback) {
-            if (properties.roles[0] == "_admin") {
+            if (_.indexOf(properties.roles, "_admin") !== -1) {
                 createAdmin(username, password, function (err) {
                     if (err) {
                         return callback(err);
@@ -331,7 +330,7 @@ exports.create = function (username, password, properties, callback) {
             }
             else {
                 createUser(username, password, properties, callback);
-            }        
+            }
     });
 };
 
@@ -348,13 +347,13 @@ exports.create = function (username, password, properties, callback) {
  */
 
 exports.update = function (username, password, properties, callback) {
-    sanitizeArguments(username, password, properties, callback, 
-        function(username, password, properties, callback) {    
+    sanitizeArguments(username, password, properties, callback,
+        function(username, password, properties, callback) {
             exports.get(username, function (err, user, options) {
                 if (err) {
                     return callback(err);
                 }
-                if (properties.roles[0] != "_admin") {
+                if (_.indexOf(properties.roles, "_admin") === -1) {
                     _.extend(user, properties);
                 }
                 if (password) {
@@ -362,7 +361,7 @@ exports.update = function (username, password, properties, callback) {
                 }
 
                 saveUser(options.authdb, user, function (err, user) {
-                    if (properties.roles[0] == "_admin") {
+                    if (_.indexOf(properties.roles, "_admin") !== -1) {
                         createAdmin(username, password, function () {
                             callback();
                         });
