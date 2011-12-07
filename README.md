@@ -18,7 +18,7 @@ must be logged in as an administrative user for this function
 to succeed.
 
 * __username__ - _String_ - The username of the user to delete
-* __callback(err,respone)__ - _Function_ - Function called on completion of the operation
+* __callback(err,response)__ - _Function_ - Function called on completion of the operation
 
 ```javascript
 users.delete('username', function (err) {
@@ -51,8 +51,8 @@ List users in the auth database. By default, it will list all users.
 By using the optional `q` parameter, you can pass additional options to the
 \_al\_docs` view for the auth database.
 
-* __q__ - _Object_ - (optional) query parameters
-* __callback__ - _Function_ - function called with the resulting list (or error)
+* __q__ - _Object_ - Query parameters (optional)
+* __callback(err,list)__ - _Function_ - Function called with the resulting list (or error)
 
 ```javascript
 users.list(function (err, list) {
@@ -70,7 +70,7 @@ If properties.roles contains \_admin', user will be made admin.
 * __username__ - _String_ - The username of the new user
 * __password__ - _String_ - The unhashed password for the new user
 * __properties__ - _Object_ - Additional properties such as roles to extend the user document with (optional)
-* __callback__ - _Function_ - Function called on completion or error
+* __callback(err,response)__ - _Function_ - Function called on completion or error
 
 ```javascript
 users.create('testuser', 'testing', {roles: ['example']}, function (err) {
@@ -87,7 +87,7 @@ Updates an existing user document. Similar usage to the create function.
 * __username__ - _String_ - The username of the new user
 * __password__ - _String_ - The unhashed password for the new user
 * __properties__ - _Object_ - Additional properties such as roles to extend the user document with (optional)
-* __callback__ - _Function_ - Function called on completion or error
+* __callback(err,response)__ - _Function_ - Function called on completion or error
 
 ```javascript
 users.update('testuser', 'testing', {roles: ['example']}, function (err) {

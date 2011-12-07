@@ -207,7 +207,7 @@ var sanitizeArguments = function(username, password, properties, cb, cb2) {
  *
  * @name delete(username, callback)
  * @param {String} username - The username of the user to delete
- * @param {Function} callback(err,respone) - Function called on completion of
+ * @param {Function} callback(err,response) - Function called on completion of
  *     the operation
  * @api public
  *
@@ -286,9 +286,9 @@ exports.get = function(username, callback) {
  * `_all_docs` view for the auth database.
  *
  * @name list([q], callback)
- * @param {Object} q - (optional) query parameters
- * @param {Function} callback - function called with the resulting list
- *     (or error)
+ * @param {Object} q - Query parameters (optional)
+ * @param {Function} callback(err,list) - Function called with the resulting
+ *     list (or error)
  * @api public
  *
  * ```javascript
@@ -342,7 +342,8 @@ exports.list = function(q, callback) {
  * @param {String} password - The unhashed password for the new user
  * @param {Object} properties - Additional properties such as roles to extend
  *     the user document with (optional)
- * @param {Function} callback - Function called on completion or error
+ * @param {Function} callback(err,response) - Function called on completion or
+ *     error
  * @api public
  *
  * ```javascript
@@ -380,7 +381,8 @@ exports.create = function (username, password, properties, callback) {
  * @param {String} password - The unhashed password for the new user
  * @param {Object} properties - Additional properties such as roles to extend
  *     the user document with (optional)
- * @param {Function} callback - Function called on completion or error
+ * @param {Function} callback(err,response) - Function called on completion or
+ *     error
  * @api public
  *
  * ```javascript
@@ -408,7 +410,7 @@ exports.update = function (username, password, properties, callback) {
                 saveUser(options.authdb, user, function (err, user) {
                     if (_.indexOf(properties.roles, "_admin") !== -1) {
                         createAdmin(username, password, function () {
-                            callback();
+                            callback(null, user);
                         });
                     }
                     else {
@@ -417,7 +419,7 @@ exports.update = function (username, password, properties, callback) {
                                 if (err.status !== 404) {
                                     return callback(err);
                                 }
-                                return callback();
+                                return callback(null, user);
                             }
                             else {
                                 deleteAdmin(username, callback);
