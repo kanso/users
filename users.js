@@ -51,7 +51,7 @@ var authdb = function(callback) {
 var getAdmin = function(username, callback) {
     db.request({
         type: 'GET',
-        url: '/_config/admins/' + username,
+        url: '/_config/admins/' + encodeURIComponent(username),
         contentType: 'application/json'
     }, callback);
 };
@@ -89,7 +89,7 @@ var deleteUser = function(authdb, id, user, callback) {
 var deleteAdmin = function(username, callback) {
     db.request({
         type: 'DELETE',
-        url: '/_config/admins/' + username,
+        url: '/_config/admins/' + encodeURIComponent(username),
         contentType: 'application/json'
     }, callback);
 };
@@ -163,7 +163,7 @@ var createUser = function(username, password, properties, callback) {
  */
 
 var createAdmin = function(username, password, callback) {
-    var url = '/_config/admins/' + username;
+    var url = '/_config/admins/' + encodeURIComponent(username);
     var req = {
         type: 'PUT',
         url: url,
