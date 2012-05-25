@@ -13,6 +13,7 @@
 
 
 var db = require('db'),
+    session = require('session'),
     sha1 = require('sha1'),
     _ = require('underscore')._;
 
@@ -408,24 +409,32 @@ exports.update = function (username, password, properties, callback) {
                 }
 
                 saveUser(options.authdb, user, function (err, user) {
-                    if (_.indexOf(properties.roles, "_admin") !== -1) {
-                        createAdmin(username, password, function () {
-                            callback(null, user);
-                        });
-                    }
-                    else {
-                        getAdmin(username, function(err, admin) {
-                            if (err) {
-                                if (err.status !== 404) {
-                                    return callback(err);
-                                }
-                                return callback(null, user);
+                    
+                    session.info(function(err, session_info){
+                        if (session_info.userCtx.roles && _.indexOf(session_info.userCtx.roles, "_admin") !== -1) {
+                            if (_.indexOf(properties.roles, "_admin") !== -1) {
+                                createAdmin(username, password, function () {
+                                    callback(null, user);
+                                });
                             }
                             else {
-                                deleteAdmin(username, callback);
+                                getAdmin(username, function(err, admin) {
+                                    if (err) {
+                                        if (err.status !== 404) {
+                                            return callback(err);
+                                        }
+                                        return callback(null, user);
+                                    }
+                                    else {
+                                        deleteAdmin(username, callback);
+                                    }
+                                });
                             }
-                        });
-                    }
+                        } else {
+                            callback(err, user);
+                        }
+                    });
+                    
                 });
             });
     });
