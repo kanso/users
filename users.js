@@ -439,3 +439,28 @@ exports.update = function (username, password, properties, callback) {
             });
     });
 };
+
+
+/**
+ * Saves a user doc to the auth db (usually /_users).
+ *
+ * @name saveDoc(user_doc, callback)
+ * @param {Object} user_doc - The user document to save
+ * @param {Function} callback(err,response) - Function called on completion of
+ *     the operation
+ * @api public
+ *
+ * ```javascript
+ * users.saveDoc(user_doc, function (err) {
+ *     if (err) // there was an error deleting the user
+ *     else     // success
+ * });
+ * ```
+ */
+
+exports.saveDoc = function (user_doc, callback) {
+    authdb(function (err, authdb) {
+        if (err) { return callback(err); }
+        saveUser(authdb, user_doc, callback);
+    });
+};
